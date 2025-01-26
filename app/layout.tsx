@@ -24,6 +24,7 @@ const dmSans = DM_Sans({
   variable: '--font-dm-sans',
 });
 
+const SITE_URL = 'https://neutron-hq.vercel.app';
 export const metadata: Metadata = {
   title: 'Neutron',
   description: 'Neutron - A simple and fast way to bookmark your articles.',
@@ -35,6 +36,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Neutron',
     description: 'Neutron - A simple and fast way to bookmark your articles.',
+    url: SITE_URL + '/api/og',
   },
   icons: {
     icon: '/favicon.ico',
