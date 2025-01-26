@@ -1,0 +1,22 @@
+/* Add this to your global CSS */
+.masonry-grid {
+  display: flex;
+  width: 100%;
+  margin-left: -16px; /* gutter size offset */
+}
+
+.masonry-grid_column {
+  padding-left: 16px; /* gutter size */
+  background-clip: padding-box;
+  width: 100% !important; /* Force columns to take full width */
+}
+
+/* Add responsive gap sizes */
+@media (max-width: 640px) {
+  .masonry-grid {
+    margin-left: -8px;
+  }
+  .masonry-grid_column {
+    padding-left: 8px;
+  }
+}
