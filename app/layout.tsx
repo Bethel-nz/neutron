@@ -75,7 +75,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  userScalable: false,
+  userScalable: true,
   viewportFit: 'cover',
 };
 
@@ -126,6 +126,7 @@ export default async function RootLayout({
           href='/favicon-16x16.png'
         />
         <link rel='manifest' href='/manifest.webmanifest' />
+        <link rel='preload' href='/auth' as='document' />
       </head>
       <body>
         <QueryClientProvider>

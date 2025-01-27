@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { redirect } from 'next/navigation';
+import { redirect, RedirectType } from 'next/navigation';
 import { Header } from '@/components/layout/header';
 import { getGroups } from '@/actions/groups';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const session = await auth();
-  if (!session?.user?.id) redirect('/auth');
+  if (!session?.user?.id) redirect('/auth', RedirectType.replace);
   const groups = await getGroups(session?.user?.id);
 
   return (

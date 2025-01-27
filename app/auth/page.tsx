@@ -45,6 +45,14 @@ import {
 } from '@/components/ui/modal';
 import { useSplashStore } from '@/store/use-splash-store';
 // import { HeroPill } from "@/components/ui/hero-pill"
+import dynamic from 'next/dynamic';
+
+const TermsModal = dynamic(() =>
+  import('@/components/auth/modals').then((mod) => mod.TermsModal)
+);
+const PrivacyModal = dynamic(() =>
+  import('@/components/auth/modals').then((mod) => mod.PrivacyModal)
+);
 
 function SubmitButton({ isPending }: { isPending: boolean }) {
   return (
@@ -61,63 +69,7 @@ function SubmitButton({ isPending }: { isPending: boolean }) {
   );
 }
 
-// function AuthPill() {
-//   return (
-//     <HeroPill
-//       href="/blog/introducing-neutron"
-//       label="Introducing Neutron"
-//     />
-//   )
-// }
-
-function TermsModal() {
-  return (
-    <Modal>
-      <ModalTrigger asChild>
-        <Button
-          variant='link'
-          className='px-0 underline underline-offset-4 hover:text-primary'
-        >
-          Terms of Service
-        </Button>
-      </ModalTrigger>
-      <ModalContent>
-        <ModalHeader>
-          <ModalTitle>Terms of Service</ModalTitle>
-        </ModalHeader>
-        <div className='space-y-4'>
-          <p>Your terms of service content here...</p>
-        </div>
-      </ModalContent>
-    </Modal>
-  );
-}
-
-function PrivacyModal() {
-  return (
-    <Modal>
-      <ModalTrigger asChild>
-        <Button
-          variant='link'
-          className='px-0 underline underline-offset-4 hover:text-primary'
-        >
-          Privacy Policy
-        </Button>
-      </ModalTrigger>
-      <ModalContent>
-        <ModalHeader>
-          <ModalTitle>Privacy Policy</ModalTitle>
-        </ModalHeader>
-        <div className='space-y-4'>
-          <p>Your privacy policy content here...</p>
-        </div>
-      </ModalContent>
-    </Modal>
-  );
-}
-
 export default function AuthPage() {
-
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -360,8 +312,14 @@ export default function AuthPage() {
             </CardContent>
           </Card>
           <p className='px-8 text-center text-sm text-muted-foreground'>
-            By clicking continue, you agree to our <TermsModal /> and{' '}
-            <PrivacyModal />.
+            By clicking continue, you agree to our{' '}
+            <span className='inline-flex'>
+              <TermsModal />
+            </span>{' '}
+            and{' '}
+            <span className='inline-flex'>
+              <PrivacyModal />
+            </span>
           </p>
         </div>
       </div>
