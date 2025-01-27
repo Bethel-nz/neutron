@@ -24,14 +24,18 @@ export function SplashScreen() {
   const router = useRouter();
 
   const messages = type === 'register' ? registerMessages : loginMessages;
-  const duration = type === 'register' ? 6000 : 3000; // Shorter for login
+  const duration = type === 'register' ? 3000 : 1500;
 
   useEffect(() => {
     if (!isVisible) return;
 
+    const totalMessages = messages.length;
+    let currentIndex = 0;
+
     const messageInterval = setInterval(() => {
-      setMessageIndex((prev) => (prev + 1) % messages.length);
-    }, 1500); // Slightly faster message changes
+      currentIndex = (currentIndex + 1) % totalMessages;
+      setMessageIndex(currentIndex);
+    }, duration / totalMessages);
 
     const timer = setTimeout(() => {
       hideSplash();
@@ -51,13 +55,17 @@ export function SplashScreen() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className='fixed inset-0 z-50 flex items-center justify-center bg-background'
+          className='fixed inset-0 z-[100] flex items-center justify-center bg-background backdrop-blur-sm'
         >
-          <div className='flex flex-col items-center gap-6'>
+          <div className='flex flex-col items-center gap-6 p-8 rounded-lg bg-card  mx-4'>
             <motion.div
               animate={{
-                rotateX: [0, 360],
-                transition: { duration: 2, repeat: Infinity, ease: 'linear' },
+                rotate: [0, 360],
+                transition: {
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'linear',
+                },
               }}
             >
               <Box className='h-12 w-12 text-primary' />
@@ -67,7 +75,8 @@ export function SplashScreen() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className='text-lg font-medium text-foreground'
+              transition={{ duration: 0.2 }}
+              className='text-lg font-medium text-foreground min-h-[28px] text-center'
             >
               {messages[messageIndex]}
             </motion.p>

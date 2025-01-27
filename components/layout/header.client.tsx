@@ -75,7 +75,7 @@ export function GroupBadge({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <motion.div
-            className='flex items-center gap-2 px-3 py-1 rounded-full group text-sm font-medium cursor-pointer relative'
+            className='flex items-center gap-2 px-3 py-1 rounded-full group  text-sm font-medium cursor-pointer relative'
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             initial={{ opacity: 0 }}
@@ -94,15 +94,15 @@ export function GroupBadge({
               transition={{ duration: 0.5, ease: 'linear' }}
             />
             <Avatar
-              className='size-4 md:size-6 rounded-full group-hover:ring-2 group-hover:ring-gray-200 relative z-10'
+              className='size-4 md:size-6 rounded-full ring-2 ring-gray-200 relative z-10'
               style={{ background: gradient }}
             />
-            <p className='text-sm font-medium text-foreground group-hover:text-foreground group-hover:bg-gray-200 rounded-full px-2 py-1 relative z-10'>
+            <p className='text-sm font-medium text-foreground  bg-gray-200 rounded-full px-2 py-1 relative z-10'>
               {currentGroup.name}
             </p>
             <ChevronsUpDown
-              size={24}
-              className='text-muted-foreground group-hover:text-foreground transition-colors group-hover:bg-gray-200 rounded-full p-1 relative z-10'
+              size={20}
+              className='text-muted-foreground group-hover:text-foreground transition-colors bg-gray-200 rounded-full p-1 relative z-10'
             />
           </motion.div>
         </DropdownMenuTrigger>

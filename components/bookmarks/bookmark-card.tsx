@@ -90,7 +90,17 @@ export const BookmarkCard = React.memo(function BookmarkCard({ bookmark, layout 
           "flex items-center shrink-0",
           layout === 'grid' ? "w-full justify-between" : "flex-col items-start gap-2 w-24"
         )}>
+        
           <div className="flex items-center gap-2">
+            <BookmarkActions 
+              bookmark={bookmark}
+            />
+            <time className="text-xs text-muted-foreground">
+              {new Date(bookmark.createdAt).toLocaleDateString()}
+            </time>
+          </div>
+
+            <div className="flex items-center gap-2">
             {bookmark.type === 'webpage' && faviconUrl && !faviconError ? (
               <div className="relative h-4 w-4">
                 <Image 
@@ -108,14 +118,6 @@ export const BookmarkCard = React.memo(function BookmarkCard({ bookmark, layout 
             <span className="text-xs text-muted-foreground">
               {bookmark.type}
             </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <time className="text-xs text-muted-foreground">
-              {new Date(bookmark.createdAt).toLocaleDateString()}
-            </time>
-            <BookmarkActions 
-              bookmark={bookmark}
-            />
           </div>
         </div>
 

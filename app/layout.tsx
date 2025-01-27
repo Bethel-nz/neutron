@@ -8,7 +8,7 @@ import { auth } from '@/auth';
 import { QueryClientProvider } from '@/query.client';
 import { RegisterSW } from '@/components/pwa/register';
 import { InstallPrompt } from '@/components/pwa/install-prompt';
-import { SplashScreen } from '@/components/splash-screen';
+// import { SplashScreen } from '@/components/splash-screen';
 
 const sora = Sora({
   subsets: ['latin'],
@@ -141,7 +141,7 @@ export default async function RootLayout({
             <Toaster />
             <RegisterSW />
             <InstallPrompt />
-            <SplashScreen />
+            {/* <SplashScreen /> */}
           </SessionProvider>
         </QueryClientProvider>
       </body>

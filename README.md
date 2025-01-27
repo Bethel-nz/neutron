@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Neutron
 
-## Getting Started
+A lightweight, fast bookmarking tool for saving and organizing articles and web content.
 
-First, run the development server:
+## Why Neutron?
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+I built Neutron out of necessity. While there are many note-taking and bookmarking apps available, I found that:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Notion was too heavy and slow to load on my PC
+- I prefer Obsidian for detailed note-taking and thought organization
+- Got too lazy to lookup andy good ones, i did find one matter but i use an android too bad
+- I needed something that just worked, quickly and efficiently
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Core Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Fast & Lightweight**: Loads instantly, no bloat
+- **Simple Organization**: Group your bookmarks by topic or project
+- **Quick Capture**: Save articles and web content with one click
+- **Offline Support**: PWA for reliable access
+- **Sync Across Devices**: Keep your bookmarks in sync
+- **Clean Interface**: Focus on what matters - your content
 
-## Learn More
+## Technical Stack
 
-To learn more about Next.js, take a look at the following resources:
+- Next.js 15 (App Router)
+- DrizzleORM + PostgreSQL
+- TanStack Query
+- Zustand
+- Framer Motion
+- Tailwind CSS
+- NextAuth.js
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Roadmap
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Fixes & Optimizations
 
-## Deploy on Vercel
+- [ ] Improve splash screen component
+- [ ] Optimize sync system for better reliability
+- [ ] Fix card sizing consistency
+- [ ] Performance optimizations
+- [ ] Fix content menu position on mobile
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### New Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [ ] Research Mode
+  - Send multiple links related to a topic
+  - AI-powered topic discussion and analysis
+  - Content summarization
+- [ ] Better offline support
+- [ ] Enhanced search capabilities
+
+## Contributing
+
+Feel free to open issues or submit PRs or whatever you do you want. This is a personal project but I'm happy to collaborate with others who find it useful.
+
+## License
+
+MIT
+
+---
+
+Built by [Bethel Nzekea](https://github.com/Bethel-nz)

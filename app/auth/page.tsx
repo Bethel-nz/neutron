@@ -36,13 +36,7 @@ import { Testimonials } from '@/components/ui/testimonials';
 // import { redirect, useSearchParams } from "next/navigation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalTitle,
-  ModalTrigger,
-} from '@/components/ui/modal';
+
 import { useSplashStore } from '@/store/use-splash-store';
 // import { HeroPill } from "@/components/ui/hero-pill"
 import dynamic from 'next/dynamic';
@@ -94,9 +88,10 @@ export default function AuthPage() {
         toast.error(result.error);
         return result.error;
       }
-      if (result?.success) {
-        useSplashStore.getState().showSplash('login');
-      }
+      // TODO: Need to revisit this
+      // if (result?.success) {
+      //   useSplashStore.getState().showSplash('login');
+      // }
       // redirect(returnTo)
       return null;
     },
@@ -114,9 +109,9 @@ export default function AuthPage() {
         toast.error(result.error);
         return result.error;
       }
-      if (result?.success) {
-        useSplashStore.getState().showSplash('register');
-      }
+      // if (result?.success) {
+      //   useSplashStore.getState().showSplash('register');
+      // }
       // redirect(returnTo)
       return null;
     },
