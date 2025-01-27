@@ -29,14 +29,12 @@ export function BookmarkInput({ className }: BookmarkInputProps) {
     if (!input.trim() || isLoading) return;
 
     const currentInput = input.trim();
-    // Clear input immediately for better UX
     setInput('');
     setQuery('');
 
     try {
       await addBookmark(currentInput);
     } catch (error) {
-      // If error occurs, restore the input
       setInput(currentInput);
       console.error('Failed to add bookmark:', error);
     }

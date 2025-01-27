@@ -39,7 +39,6 @@ export async function createBookmark(data: NewBookmark) {
         userId: session.user.id as string,
       })
       .returning();
-    console.log(newBookmark);
     return newBookmark;
   } catch (error) {
     console.error('Error creating bookmark:', error);

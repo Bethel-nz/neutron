@@ -69,7 +69,22 @@ export function BookmarksList({ layout, searchQuery }: BookmarksListProps) {
     return groupBookmarksByDate(sortedAndFilteredBookmarks);
   }, [sortedAndFilteredBookmarks]);
 
-  if (isLoading) return LoadingState(isLoading, layout);
+  if (isLoading) {
+    return (
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton
+            key={i}
+            className={cn(
+              'w-full bg-card transition-all',
+              layout === 'grid' ? 'h-40' : 'h-24',
+              'rounded-lg'
+            )}
+          />
+        ))}
+      </div>
+    );
+  }
 
   // Empty state
   if (!bookmarks || (bookmarks.length === 0 && showEmpty)) {
@@ -90,7 +105,7 @@ export function BookmarksList({ layout, searchQuery }: BookmarksListProps) {
 
   return (
     <div className='space-y-8'>
-      <AnimatePresence mode='wait' initial={false}>
+      <AnimatePresence mode='popLayout'>
         {groupedBookmarks.map(([date, dateBookmarks]) => (
           <motion.div
             key={date}
@@ -150,22 +165,3 @@ export function BookmarksList({ layout, searchQuery }: BookmarksListProps) {
     </div>
   );
 }
-
-const LoadingState = (isLoading: boolean, layout?: LayoutType) => {
-  if (isLoading) {
-    return (
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton
-            key={i}
-            className={cn(
-              'w-full bg-card transition-all',
-              layout === 'grid' ? 'h-40' : 'h-24',
-              'rounded-lg'
-            )}
-          />
-        ))}
-      </div>
-    );
-  }
-};

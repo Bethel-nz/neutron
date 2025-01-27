@@ -8,6 +8,7 @@ import { auth } from '@/auth';
 import { QueryClientProvider } from '@/query.client';
 import { RegisterSW } from '@/components/pwa/register';
 import { InstallPrompt } from '@/components/pwa/install-prompt';
+import { SplashScreen } from '@/components/splash-screen';
 
 const sora = Sora({
   subsets: ['latin'],
@@ -55,7 +56,7 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   authors: [
-    { name: 'Neutron', url: '' },
+    { name: 'Neutron', url: 'https://neutron-hq.vercel.app' },
     { name: 'Bethel Nzekea', url: 'https://not-bethel.vercel.app' },
   ],
   appleWebApp: {
@@ -91,6 +92,22 @@ export default async function RootLayout({
       className={`${sora.variable} ${inter.variable} ${dmSans.variable}`}
     >
       <head>
+        <link rel='preconnect' href='https://fonts.googleapis.com' />
+        <link
+          rel='preconnect'
+          href='https://fonts.gstatic.com'
+          crossOrigin=''
+        />
+
+        <link rel='preload' href='/android-chrome-512x512.png' as='image' />
+        <link rel='preload' href='/android-chrome-192x192.png' as='image' />
+        <link
+          rel='preload'
+          href='/manifest.webmanifest'
+          as='fetch'
+          crossOrigin='anonymous'
+        />
+
         <link
           rel='apple-touch-icon'
           sizes='180x180'
@@ -123,6 +140,7 @@ export default async function RootLayout({
             <Toaster />
             <RegisterSW />
             <InstallPrompt />
+            <SplashScreen />
           </SessionProvider>
         </QueryClientProvider>
       </body>

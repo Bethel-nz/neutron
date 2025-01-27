@@ -1,17 +1,11 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { startTransition } from "react"
-import {
-  Pencil,
-  Trash,
-  Share2,
-  MoreVertical,
-  Copy,
-} from "lucide-react"
-import { useActionState } from "react"
-import { toast } from "sonner"
-import { updateBookmark, deleteBookmark } from "@/actions/bookmarks"
+import * as React from 'react';
+import { startTransition } from 'react';
+import { Pencil, Trash, Share2, MoreVertical, Copy } from 'lucide-react';
+import { useActionState } from 'react';
+import { toast } from 'sonner';
+import { updateBookmark, deleteBookmark } from '@/actions/bookmarks';
 import {
   FloatingActionPanelRoot,
   FloatingActionPanelTrigger,
@@ -19,133 +13,135 @@ import {
   FloatingActionPanelButton,
   FloatingActionPanelForm,
   FloatingActionPanelTextarea,
-} from "@/components/ui/floating-action-panel"
-import { Button } from "@/components/ui/button"
-import type { Bookmark } from "@/types"
-import {queryClient} from "@/query.client"
+} from '@/components/ui/floating-action-panel';
+import { Button } from '@/components/ui/button';
+import type { Bookmark } from '@/types';
+import { queryClient } from '@/query.client';
 
 interface BookmarkActionsProps {
-  bookmark: Bookmark
+  bookmark: Bookmark;
 }
 
 export function BookmarkActions({ bookmark }: BookmarkActionsProps) {
   const [editError, editAction, isEditPending] = useActionState(
     async (_: null | string, formData: FormData) => {
-      const content = formData.get('content') as string
-      const result = await updateBookmark(bookmark.id, content)
+      const content = formData.get('content') as string;
+      const result = await updateBookmark(bookmark.id, content);
       if (result?.error) {
-        toast.error(result.error)
-        return result.error
+        toast.error(result.error);
+        return result.error;
       }
-      toast.success('Bookmark updated')
-      return null
+      toast.success('Bookmark updated');
+      return null;
     },
     null
-  )
+  );
 
-  const [panelMode, setPanelMode] = React.useState<"actions" | "note">("actions")
+  const [panelMode, setPanelMode] = React.useState<'actions' | 'note'>(
+    'actions'
+  );
 
   const [deleteError, deleteAction, isDeletePending] = useActionState(
     async () => {
-      const result = await deleteBookmark(bookmark.id)
+      const result = await deleteBookmark(bookmark.id);
       if (result?.error) {
-        toast.error(result.error)
-        return result.error
+        toast.error(result.error);
+        return result.error;
       }
-      queryClient.invalidateQueries({ queryKey: ['bookmarks'] })
-      toast.success('Bookmark deleted')
-      return null
+      queryClient.invalidateQueries({ queryKey: ['bookmarks'] });
+      toast.success('Bookmark deleted');
+      return null;
     },
     null
-  )
+  );
 
   const handleDelete = () => {
     startTransition(() => {
-      deleteAction()
-    })
-  }
+      deleteAction();
+    });
+  };
 
   const handleShare = () => {
-    const textToCopy = bookmark.url || bookmark.content
-    if (!textToCopy) return
-    
-    navigator.clipboard.writeText(textToCopy)
-    toast.success(`${bookmark.url ? 'URL' : 'Content'} copied to clipboard`)
-  }
+    const textToCopy = bookmark.url || bookmark.content;
+    if (!textToCopy) return;
+
+    navigator.clipboard.writeText(textToCopy);
+    toast.success(`${bookmark.url ? 'URL' : 'Content'} copied to clipboard`);
+  };
 
   return (
     <FloatingActionPanelRoot>
       {({ mode }) => (
         <>
-          <FloatingActionPanelTrigger 
+          <FloatingActionPanelTrigger
             mode={panelMode}
-            className="h-8 w-8 shrink-0 flex items-center justify-center"
+            className='h-8 w-8 shrink-0 flex items-center justify-center'
           >
-            <MoreVertical className="h-4 w-4 hidden group-hover:block" />
+            <MoreVertical className='h-4 w-4 block md:hidden group-hover:block' />
           </FloatingActionPanelTrigger>
 
           <FloatingActionPanelContent>
-            {mode === "actions" ? (
-              <div className="space-y-1 p-2">
+            {mode === 'actions' ? (
+              <div className='space-y-1 p-2'>
                 {bookmark.type === 'article' && (
-                  <FloatingActionPanelButton 
-                    onClick={() => setPanelMode("note")}
-                    className="hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50"
+                  <FloatingActionPanelButton
+                    onClick={() => setPanelMode('note')}
+                    className='hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50'
                   >
-                    <Pencil className="h-4 w-4" />
+                    <Pencil className='h-4 w-4' />
                     Edit Content
                   </FloatingActionPanelButton>
                 )}
-                <FloatingActionPanelButton 
+                <FloatingActionPanelButton
                   onClick={handleDelete}
                   disabled={isDeletePending}
-                  className="hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50"
+                  className='hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50'
                 >
-                  <Trash className="h-4 w-4" />
+                  <Trash className='h-4 w-4' />
                   {isDeletePending ? 'Deleting...' : 'Delete'}
                 </FloatingActionPanelButton>
-                <FloatingActionPanelButton 
+                <FloatingActionPanelButton
                   onClick={handleShare}
-                  className="hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50"
+                  className='hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50'
                 >
-                  <Copy className="h-4 w-4" />
+                  <Copy className='h-4 w-4' />
                   Copy {bookmark.url ? 'URL' : 'Content'}
                 </FloatingActionPanelButton>
               </div>
             ) : (
-              <FloatingActionPanelForm 
+              <FloatingActionPanelForm
                 onSubmit={(content) => {
-                  const formData = new FormData()
-                  formData.append('content', content)
-                  editAction(formData)
-                  setPanelMode("actions")
-                }} 
-                className="p-2 min-w-[300px]"
+                  const formData = new FormData();
+                  formData.append('content', content);
+                  editAction(formData);
+                  setPanelMode('actions');
+                }}
+                className='p-2 min-w-[300px]'
               >
-                <FloatingActionPanelTextarea 
-                  className="mb-2 h-24" 
-                  id="bookmark-content"
+                <FloatingActionPanelTextarea
+                  className='mb-2 h-24'
+                  id='bookmark-content'
                   defaultValue={bookmark.content || ''}
                   disabled={isEditPending}
                 />
-                <div className="flex justify-between">
+                <div className='flex justify-between'>
                   <button
-                    type="button"
-                    onClick={() => setPanelMode("actions")}
-                    className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                    type='button'
+                    onClick={() => setPanelMode('actions')}
+                    className='flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
                   >
                     Cancel
                   </button>
-                  <button 
-                    type="submit" 
-                    className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-zinc-900 hover:bg-zinc-100 dark:text-zinc-50 dark:hover:bg-zinc-800"
+                  <button
+                    type='submit'
+                    className='flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-zinc-900 hover:bg-zinc-100 dark:text-zinc-50 dark:hover:bg-zinc-800'
                     disabled={isEditPending}
                   >
                     {isEditPending ? 'Saving...' : 'Save Changes'}
                   </button>
                 </div>
                 {editError && (
-                  <p className="text-sm text-destructive mt-2">{editError}</p>
+                  <p className='text-sm text-destructive mt-2'>{editError}</p>
                 )}
               </FloatingActionPanelForm>
             )}
@@ -153,5 +149,5 @@ export function BookmarkActions({ bookmark }: BookmarkActionsProps) {
         </>
       )}
     </FloatingActionPanelRoot>
-  )
-} 
+  );
+}

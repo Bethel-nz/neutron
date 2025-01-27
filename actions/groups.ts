@@ -1,52 +1,54 @@
 // app/actions.ts
-'use server'
+'use server';
 
-import { auth } from '@/auth'
-import drizzle from '@/drizzle'
-import { groups } from '@/drizzle/models'
-import { Group } from '@/types'
-import { eq } from 'drizzle-orm'
-import {sleep} from "@/lib/utils"
+import { auth } from '@/auth';
+import drizzle from '@/drizzle';
+import { groups } from '@/drizzle/models';
+import { Group } from '@/types';
+import { eq, desc } from 'drizzle-orm';
+import { sleep } from '@/lib/utils';
 
 export async function getGroups(userId: string): Promise<Group[] | []> {
-	const session = await auth();
-	if (!session) return [];
+  if (!userId) return [];
 
-	await sleep()
-	const userGroups = await drizzle
-		.select()
-		.from(groups)
-		.where(eq(groups.userId, userId));
+  const userGroups = await drizzle.query.groups.findMany({
+    where: eq(groups.userId, userId),
+    orderBy: (groups, { desc }) => [desc(groups.createdAt)],
+  });
 
-	// Proper sorting with type-safe date handling
-	const sortedGroups = userGroups.sort((a, b) => {
-		
-		const aDate = a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt!);
-		const bDate = b.createdAt instanceof Date ? b.createdAt : new Date(b.createdAt!);
-		return aDate.getTime() - bDate.getTime();
-	});
+  // If no groups exist, create default group
+  if (userGroups.length === 0) {
+    const [defaultGroup] = await drizzle
+      .insert(groups)
+      .values({
+        userId,
+        name: 'bookmarks',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
 
-	// Type-safe way to add isDefault property
-	const groupsWithDefault = sortedGroups.map((group, index) => ({
-		...group,
-		isDefault: index === 0
-	})) as (Group & { isDefault: boolean })[];
+    return [defaultGroup];
+  }
 
-	return groupsWithDefault;
+  return userGroups;
 }
 
-export async function newGroup(name: string, slug: string, userId: string): Promise<Group | null> {
-    try {
-        const session = await auth();
-        if (!session) return null;
+export async function newGroup(
+  name: string,
+  userId: string
+): Promise<Group | null> {
+  if (!userId) throw new Error('Unauthorized');
 
-        const [newGroup] = await drizzle.insert(groups)
-            .values({ name, slug, userId })
-            .returning();
+  const [group] = await drizzle
+    .insert(groups)
+    .values({
+      userId,
+      name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .returning();
 
-        return newGroup as Group;
-    } catch (error) {
-        console.error('Error creating group:', error);
-        return null;
-    }
+  return group;
 }

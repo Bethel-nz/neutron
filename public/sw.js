@@ -3,8 +3,8 @@ self.addEventListener('push', function (event) {
 		const data = event.data.json()
 		const options = {
 			body: data.body,
-			icon: '/icon-512x512.png',
-			badge: '/icon-192x192.png',
+			icon: '/android-chrome-512x512.png',
+			badge: '/android-chrome-192x192.png',
 			vibrate: [100, 50, 100],
 			data: {
 				dateOfArrival: Date.now(),
@@ -25,8 +25,8 @@ const CACHE_NAME = 'neutron-cache-v1'
 const urlsToCache = [
 	'/',
 	'/manifest.webmanifest',
-	'/icon-192x192.png',
-	'/icon-512x512.png',
+	'/android-chrome-192x192.png',
+	'/android-chrome-512x512.png',
 	'/apple-touch-icon.png',
 	'/favicon-32x32.png',
 	'/favicon-16x16.png',

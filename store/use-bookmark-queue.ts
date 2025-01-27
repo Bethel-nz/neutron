@@ -21,6 +21,10 @@ interface BookmarkQueueStore {
   processQueue: () => Promise<void>;
 }
 
+/**
+ * Note: This is a basic queue system that utilizes zustand persist to queue each data you pass in
+ * this feels like i over did it but i couldnt find any way to implement a sync system without having to go through a log of stress
+ */
 export const useBookmarkQueue = create<BookmarkQueueStore>()(
   persist(
     (set, get) => ({
