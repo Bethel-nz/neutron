@@ -1,28 +1,10 @@
-self.addEventListener('push', function (event) {
-	if (event.data) {
-		const data = event.data.json()
-		const options = {
-			body: data.body,
-			icon: '/android-chrome-512x512.png',
-			badge: '/android-chrome-192x192.png',
-			vibrate: [100, 50, 100],
-			data: {
-				dateOfArrival: Date.now(),
-				primaryKey: '2',
-			},
-		}
-		event.waitUntil(self.registration.showNotification(data.title, options))
-	}
-})
+// Define versions and constants at the top
+const VERSION = '1.0.0';
+const CACHE_NAME = `neutron-cache-v${VERSION}`;
+const OFFLINE_URL = '/offline.html';
+const API_CACHE_NAME = `neutron-api-cache-v${VERSION}`;
 
-self.addEventListener('notificationclick', function (event) {
-	event.notification.close()
-	event.waitUntil(clients.openWindow('/'))
-})
-
-// Cache static assets
-const CACHE_NAME = 'neutron-cache-v1'
-const urlsToCache = [
+const STATIC_ASSETS = [
 	'/',
 	'/manifest.webmanifest',
 	'/android-chrome-192x192.png',
@@ -30,63 +12,143 @@ const urlsToCache = [
 	'/apple-touch-icon.png',
 	'/favicon-32x32.png',
 	'/favicon-16x16.png',
-	'/favicon.ico'
-]
+	'/favicon.ico',
+	OFFLINE_URL,
+];
 
-// Install event - cache core assets
+// Separate API and static asset caching strategies
+const cacheFirst = async (request) => {
+	const cache = await caches.match(request);
+	return cache || fetch(request);
+};
+
+const networkFirst = async (request) => {
+	try {
+		const response = await fetch(request);
+		if (response.ok) {
+			const cache = await caches.open(API_CACHE_NAME);
+			cache.put(request, response.clone());
+		}
+		return response;
+	} catch (error) {
+		const cache = await caches.match(request);
+		return cache || Response.error();
+	}
+};
+
+// Enhanced install event
 self.addEventListener('install', (event) => {
 	event.waitUntil(
-		caches.open(CACHE_NAME)
-			.then((cache) => cache.addAll(urlsToCache))
-	)
-	// Activate worker immediately
-	self.skipWaiting()
-})
+		Promise.all([
+			caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)),
+			caches.open(API_CACHE_NAME),
+		]).then(() => self.skipWaiting())
+	);
+});
 
-// Activate event - cleanup old caches
+// Enhanced activate event with better cache cleanup
 self.addEventListener('activate', (event) => {
 	event.waitUntil(
-		caches.keys().then((cacheNames) => {
-			return Promise.all(
-				cacheNames
-					.filter((name) => name !== CACHE_NAME)
-					.map((name) => caches.delete(name))
-			)
-		})
-	)
-	// Ensure service worker takes control immediately
-	self.clients.claim()
-})
+		Promise.all([
+			caches.keys().then((keys) =>
+				Promise.all(
+					keys
+						.filter(
+							(key) =>
+								key.startsWith('neutron-') &&
+								![CACHE_NAME, API_CACHE_NAME].includes(key)
+						)
+						.map((key) => caches.delete(key))
+				)
+			),
+			self.clients.claim(),
+		])
+	);
+});
 
-// Fetch event - network first, falling back to cache
+// Enhanced fetch event with different strategies for different requests
 self.addEventListener('fetch', (event) => {
-	// Only handle GET requests
-	if (event.request.method !== 'GET') return
+	const { request } = event;
 
-	event.respondWith(
-		fetch(event.request)
-			.then((response) => {
-				// Cache successful responses for future offline use
-				if (response.ok) {
-					const responseClone = response.clone()
-					caches.open(CACHE_NAME).then((cache) => {
-						cache.put(event.request, responseClone)
-					})
+	// Ignore non-GET requests
+	if (request.method !== 'GET') return;
+
+	// Parse the URL
+	const url = new URL(request.url);
+
+	// Different caching strategies based on request type
+	if (request.mode === 'navigate') {
+		// Navigation requests
+		event.respondWith(networkFirst(request));
+	} else if (request.destination === 'image' ||
+		request.destination === 'font' ||
+		request.destination === 'style') {
+		// Static assets
+		event.respondWith(cacheFirst(request));
+	} else if (url.pathname.startsWith('/api/')) {
+		// API requests
+		event.respondWith(networkFirst(request));
+	} else {
+		// Other requests
+		event.respondWith(networkFirst(request));
+	}
+});
+
+// Enhanced push notification handling
+self.addEventListener('push', (event) => {
+	if (!event.data) return;
+
+	try {
+		const data = event.data.json();
+		const options = {
+			body: data.body,
+			icon: '/android-chrome-512x512.png',
+			badge: '/android-chrome-192x192.png',
+			vibrate: [100, 50, 100],
+			data: {
+				dateOfArrival: Date.now(),
+				primaryKey: data.id || '1',
+				url: data.url || '/',
+			},
+			actions: [
+				{
+					action: 'open',
+					title: 'Open',
+				},
+				{
+					action: 'close',
+					title: 'Close',
+				},
+			],
+		};
+
+		event.waitUntil(
+			self.registration.showNotification(data.title, options)
+		);
+	} catch (error) {
+		console.error('Push event processing failed:', error);
+	}
+});
+
+// Enhanced notification click handling
+self.addEventListener('notificationclick', (event) => {
+	event.notification.close();
+
+	if (event.action === 'close') return;
+
+	const url = event.notification.data.url || '/';
+
+	event.waitUntil(
+		clients.matchAll({ type: 'window' }).then((windowClients) => {
+			for (const client of windowClients) {
+				if (client.url === url && 'focus' in client) {
+					return client.focus();
 				}
-				return response
-			})
-			.catch(() => {
-				// If network fails, try to get from cache
-				return caches.match(event.request)
-					.then((response) => {
-						if (response) return response
+			}
+			if (clients.openWindow) {
+				return clients.openWindow(url);
+			}
+		})
+	);
+});
 
-						// If not in cache and offline, return offline page
-						if (event.request.mode === 'navigate') {
-							return caches.match('/')
-						}
-						return null
-					})
-			})
-	)
-}) 
