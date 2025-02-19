@@ -2,13 +2,13 @@
 
 import React from 'react';
 // import { Group } from '@/types'
-import { NeutronIcon } from '../ui/icon';
-import { User } from 'next-auth';
-import { GroupBadge, UserDropdown } from './header.client';
-import { useSession } from 'next-auth/react';
-import { useQuery } from '@tanstack/react-query';
 import { getGroups } from '@/actions/groups';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useQuery } from '@tanstack/react-query';
+import { User } from 'next-auth';
+import { useSession } from 'next-auth/react';
+import { NeutronIcon } from '../ui/icon';
+import { GroupBadge, UserDropdown } from './header.client';
 // import { useRouter } from 'next/navigation'
 import { useActiveGroup } from '@/hooks/use-active-group';
 // import { toast } from 'sonner'
@@ -34,7 +34,7 @@ export function Header({ initialGroups = [] }: HeaderProps) {
 
   // Set initial active group
   React.useEffect(() => {
-    if (groups?.length >0 && !activeGroup ) {
+    if (groups?.length > 0 && !activeGroup) {
       const defaultGroup = groups[0];
       setActiveGroup(defaultGroup);
     }
