@@ -1,23 +1,22 @@
-import type { Metadata, Viewport } from 'next';
-import './globals.css';
 import { SessionProvider } from '@/providers';
+import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'sonner';
+import './globals.css';
 
-import { Inter, Sora, DM_Sans } from 'next/font/google';
 import { auth } from '@/auth';
-import { QueryClientProvider } from '@/query.client';
-import { RegisterSW } from '@/components/pwa/register';
 import { InstallPrompt } from '@/components/pwa/install-prompt';
-// import { SplashScreen } from '@/components/splash-screen';
-
-const sora = Sora({
-  subsets: ['latin'],
-  variable: '--font-sora',
-});
+import { RegisterSW } from '@/components/pwa/register';
+import { QueryClientProvider } from '@/query.client';
+import { DM_Sans, Inter, Sora } from 'next/font/google';
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+});
+
+const sora = Sora({
+  subsets: ['latin'],
+  variable: '--font-sora',
 });
 
 const dmSans = DM_Sans({
@@ -132,7 +131,7 @@ export default async function RootLayout({
         <QueryClientProvider>
           <SessionProvider
             session={session}
-            refetchOnWindowFocus={true}
+            refetchOnWindowFocus={false}
             refetchWhenOffline={false}
             basePath='/api/auth'
             refetchInterval={60 * 60 * 5}
