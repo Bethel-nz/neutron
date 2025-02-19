@@ -1,12 +1,12 @@
 'use client';
 
-import * as React from 'react';
 import { Input } from '@/components/ui/input';
-import { Plus, Loader2 } from 'lucide-react';
-import { useSearch } from '@/store/use-search';
-import { useBookmarkActions } from './hooks/use-bookmark-actions';
-import { cn } from '@/lib/utils';
 import { useActiveGroup } from '@/hooks/use-active-group';
+import { cn } from '@/lib/utils';
+import { useSearch } from '@/store/use-search';
+import { Loader2, Plus } from 'lucide-react';
+import * as React from 'react';
+import { useBookmarkActions } from './hooks/use-bookmark-actions';
 
 interface BookmarkInputProps {
   className?: string;
@@ -19,10 +19,22 @@ export function BookmarkInput({ className }: BookmarkInputProps) {
   const { setQuery } = useSearch();
   const inputRef = React.useRef(input);
 
-  // Keep latest input value in ref to use in async operation
   React.useEffect(() => {
     inputRef.current = input;
   }, [input]);
+
+  const formatContent = (content: string) => {
+    try {
+      new URL(content);
+      return content;
+    } catch {
+      return content
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .join('\n');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,11 +45,18 @@ export function BookmarkInput({ className }: BookmarkInputProps) {
     setQuery('');
 
     try {
-      await addBookmark(currentInput);
+      const formattedContent = formatContent(currentInput);
+      await addBookmark(formattedContent);
     } catch (error) {
       setInput(currentInput);
       console.error('Failed to add bookmark:', error);
     }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData('text');
+    setInput(pastedText); // This will preserve the formatting
   };
 
   return (
@@ -47,6 +66,7 @@ export function BookmarkInput({ className }: BookmarkInputProps) {
         placeholder={isLoading ? 'Processing...' : 'Add a bookmark...'}
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        onPaste={handlePaste}
         className='pr-10'
         disabled={isLoading}
       />
