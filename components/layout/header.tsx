@@ -23,6 +23,9 @@ export function Header({ initialGroups = [] }: HeaderProps) {
   const { data: session, status: sessionStatus } = useSession();
   const user = session?.user;
 
+  const { activeGroup, setActiveGroup } = useActiveGroup();
+
+  // Fetch groups based on the active group
   const { data: groups, isLoading } = useQuery({
     queryKey: ['groups', user?.id],
     queryFn: () => getGroups(user?.id as string),
@@ -30,15 +33,13 @@ export function Header({ initialGroups = [] }: HeaderProps) {
     initialData: initialGroups,
   });
 
-  const { activeGroup, setActiveGroup } = useActiveGroup();
-
-  // Set initial active group
+  // Set initial active group if not already set
   React.useEffect(() => {
     if (groups?.length > 0 && !activeGroup) {
       const defaultGroup = groups[0];
       setActiveGroup(defaultGroup);
     }
-  }, [groups]);
+  }, [groups, activeGroup, setActiveGroup]);
 
   if (sessionStatus === 'loading' || !user) return null;
 

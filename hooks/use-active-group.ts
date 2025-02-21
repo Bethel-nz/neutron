@@ -1,7 +1,7 @@
 import { queryClient } from '@/query.client';
 import type { Group } from '@/types';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface ActiveGroupState {
   activeGroup: Group | null;
@@ -35,6 +35,7 @@ export const useActiveGroup = create<ActiveGroupState>()(
         activeGroup: state.activeGroup,
         lastActiveTimestamp: state.lastActiveTimestamp,
       }),
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );
