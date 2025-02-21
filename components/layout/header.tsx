@@ -35,7 +35,7 @@ export function Header({ initialGroups = [] }: HeaderProps) {
 
   // Set initial active group if not already set
   React.useEffect(() => {
-    if (groups?.length > 0 && !activeGroup) {
+    if (!activeGroup && groups?.length > 0) {
       const defaultGroup = groups[0];
       setActiveGroup(defaultGroup);
     }
