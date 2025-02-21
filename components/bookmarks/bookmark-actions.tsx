@@ -1,6 +1,14 @@
 'use client';
 
 import { deleteBookmark, updateBookmark } from '@/actions/bookmarks';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogOverlay,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   FloatingActionPanelButton,
   FloatingActionPanelContent,
@@ -39,7 +47,6 @@ export function BookmarkActions({ bookmark }: BookmarkActionsProps) {
   const [panelMode, setPanelMode] = React.useState<'actions' | 'note'>(
     'actions'
   );
-
   const [, deleteAction, isDeletePending] = useActionState(async () => {
     try {
       const result = await deleteBookmark(bookmark.id);
@@ -56,12 +63,17 @@ export function BookmarkActions({ bookmark }: BookmarkActionsProps) {
     }
   }, null);
 
+  const [isDialogOpen, setDialogOpen] = React.useState(false);
+
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this bookmark?')) {
-      startTransition(() => {
-        deleteAction();
-      });
-    }
+    setDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    startTransition(() => {
+      deleteAction();
+      setDialogOpen(false);
+    });
   };
 
   const handleShare = () => {
@@ -159,6 +171,24 @@ export function BookmarkActions({ bookmark }: BookmarkActionsProps) {
               </FloatingActionPanelForm>
             )}
           </FloatingActionPanelContent>
+
+          <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+            <DialogOverlay />
+            <DialogContent>
+              <DialogTitle>Confirm Deletion</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this bookmark?
+              </DialogDescription>
+              <div className='mt-4 flex justify-end space-x-2'>
+                <Button onClick={() => setDialogOpen(false)} variant='outline'>
+                  Cancel
+                </Button>
+                <Button onClick={handleConfirmDelete} variant='destructive'>
+                  Confirm
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </>
       )}
     </FloatingActionPanelRoot>
