@@ -1,13 +1,11 @@
 'use server';
 
-import { loginSchema, registerSchema } from '@/lib/schemas/auth';
 import { signIn, signOut } from '@/auth';
 import drizzle from '@/drizzle';
-import { groups, users } from '@/drizzle/models';
-import bcrypt from 'bcryptjs';
+import { users } from '@/drizzle/models';
+import { loginSchema, registerSchema } from '@/lib/schemas/auth';
+import { compareSync, genSaltSync, hashSync } from 'bcrypt-edge';
 import { AuthError } from 'next-auth';
-import { eq } from 'drizzle-orm';
-import { useSplashStore } from '@/store/use-splash-store';
 
 /**
  * @note
@@ -57,13 +55,10 @@ export async function auth(formData: FormData, type: AuthType) {
         return { error: 'Invalid credentials' };
       }
 
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(
-        ValidatedRegister.data.password,
-        salt
-      );
+      const salt = genSaltSync(10);
+      const hashedPassword = hashSync(ValidatedRegister.data.password, salt);
 
-      const [newUser] = await drizzle
+      const [] = await drizzle
         .insert(users)
         .values({
           email: ValidatedRegister.data.email,
@@ -78,7 +73,7 @@ export async function auth(formData: FormData, type: AuthType) {
         return { error: 'User already exists' };
       }
       // Verify password for login
-      const validPassword = await bcrypt.compare(
+      const validPassword = compareSync(
         ValidatedLogin.data.password,
         existingUser.password as string
       );

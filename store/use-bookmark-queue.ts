@@ -20,7 +20,7 @@ interface BookmarkQueueStore {
   queue: QueuedBookmark[];
   isProcessing: boolean;
   isCheckingConnectivity: boolean;
-  addToQueue: (bookmark: Omit<QueuedBookmark, 'timestamp'>) => void;
+  addToQueue: (bookmark: QueuedBookmark) => void;
   removeFromQueue: (id: string) => void;
   processQueue: () => Promise<void>;
   retryFailedOperations: () => Promise<void>;
